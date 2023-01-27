@@ -39,6 +39,18 @@
 		});
 	}
 
+	function onElementBlur(row: number, col: number): void {
+		const val = value.element(row, col);
+		const reduced = val.reduce();
+		if (!val.equals(reduced)) {
+			console.log("blur");
+			const newVal = value.createCopy();
+			newVal.setElement(row, col, reduced);
+			value = newVal;
+			dispatch("input");
+		}
+	}
+
 	function onAddColumnButtonPressed(): void {
 		try {
 			let newVal = value.createCopy();
@@ -128,6 +140,7 @@
 									);
 								}}
 								on:parsing-error={onParsingError}
+								on:blur={() => onElementBlur(row + 1, col + 1)}
 							/>
 						</div>
 					{/each}

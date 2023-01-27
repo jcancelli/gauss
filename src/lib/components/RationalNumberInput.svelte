@@ -8,7 +8,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	function onInput() {
+	function onInput(): void {
 		try {
 			if (stringValue === "") {
 				return;
@@ -26,9 +26,13 @@
 
 	function onClick(
 		event: MouseEvent & { currentTarget: EventTarget & HTMLInputElement }
-	) {
+	): void {
 		event.currentTarget.select();
 		dispatch("click");
+	}
+
+	function onBlur(): void {
+		dispatch("blur");
 	}
 </script>
 
@@ -36,6 +40,6 @@
 	bind:value={stringValue}
 	on:input={onInput}
 	on:click={onClick}
-	on:blur
+	on:blur={onBlur}
 	class="w-[3ch] p-0 box-content text-center text-2xl leading-none font-semibold border rounded-md"
 />
