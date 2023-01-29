@@ -1,6 +1,8 @@
 import RationalNumber, { MINUS_ONE, ZERO } from "./RationalNumber"
 
 export default class Matrix {
+	public static readonly MIN_HEIGHT = 2
+	public static readonly MIN_WIDTH = 2
 	private elements: RationalNumber[][] = []
 
 	constructor(mat: RationalNumber[][] | number[][]) {
@@ -31,7 +33,7 @@ export default class Matrix {
 
 	/** Sets the matrix to the passed values */
 	public setValues(values: RationalNumber[][] | number[][]): void {
-		if (values.length < 2) {
+		if (values.length < Matrix.MIN_HEIGHT) {
 			throw new Error("Height < 2")
 		}
 		let elements = []
@@ -41,7 +43,7 @@ export default class Matrix {
 				maxWidth = values[i].length
 			}
 		}
-		if (maxWidth < 2) {
+		if (maxWidth < Matrix.MIN_WIDTH) {
 			throw new Error("Width < 2")
 		}
 		if (typeof values[0][0] === "number") {
@@ -103,6 +105,37 @@ export default class Matrix {
 		for (let i = 0; i < this.height(); i++) {
 			this.elements[i].pop()
 		}
+	}
+
+	/** Returns this Matrix resized to the specified size  */
+	public resize(width: number, height: number): Matrix {
+		if (width < Matrix.MIN_WIDTH) {
+			throw new Error(`Minimum matrix width: ${Matrix.MIN_WIDTH}`)
+		}
+		if (height < Matrix.MIN_HEIGHT) {
+			throw new Error(`Minimum matrix height: ${Matrix.MIN_HEIGHT}`)
+		}
+		let newValues: RationalNumber[][] = []
+		for (let row of this.elements) {
+			newValues.push([...row])
+		}
+		if (width < this.width()) {
+			for (let i = 0; i < this.height(); i++) {
+				newValues[i] = newValues[i].slice(0, width)
+			}
+		} else if (width > this.width()) {
+			for (let i = 0; i < this.height(); i++) {
+				newValues[i] = newValues[i].concat(new Array(width - this.width()).fill(ZERO))
+			}
+		}
+		if (height < this.height()) {
+			newValues = newValues.slice(0, height)
+		} else if (height > this.height()) {
+			for (let i = 0; i < height - this.height(); i++) {
+				newValues.push(new Array(width).fill(ZERO))
+			}
+		}
+		return new Matrix(newValues)
 	}
 
 	/** Transform this matrix to its row echelon form (Gauss algorithm) */
